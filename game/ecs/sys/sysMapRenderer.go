@@ -3,7 +3,6 @@ package sys
 import (
 	"image"
 
-	comps "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -17,9 +16,9 @@ func (s *SystemMapRenderer) Update(entities []ec.Entity, delta float64) {
 
 func (s *SystemMapRenderer) Draw(entities []ec.Entity, screen *ebiten.Image) {
 	for i := range entities {
-		if entities[i].HasComponent(comps.C_MAP) {
-			mc := entities[i].GetComponentWithID(comps.C_MAP)
-			var m *comps.ComponentMap = mc.(*comps.ComponentMap)
+		if entities[i].HasComponent(ec.C_MAP) {
+			mc := entities[i].GetComponentWithID(ec.C_MAP)
+			var m *ec.ComponentMap = mc.(*ec.ComponentMap)
 
 			tileSize := int(m.TileSize)
 			cols := m.Columns

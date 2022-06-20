@@ -2,8 +2,6 @@ package sys
 
 import (
 	"fmt"
-
-	comps "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -14,9 +12,9 @@ type SystemFPSTracker struct {
 
 func (sr *SystemFPSTracker) Update(entities *[]ec.Entity, delta float64) {
 	for i := range *entities {
-		if (*entities)[i].HasComponent(comps.C_FPSTRACKER) && (*entities)[i].HasComponent(comps.C_TEXT) {
-			comp := (*entities)[i].GetComponentWithID(comps.C_TEXT)
-			var t *comps.ComponentText = comp.(*comps.ComponentText)
+		if (*entities)[i].HasComponent(ec.C_FPSTRACKER) && (*entities)[i].HasComponent(ec.C_TEXT) {
+			comp := (*entities)[i].GetComponentWithID(ec.C_TEXT)
+			var t *ec.ComponentText = comp.(*ec.ComponentText)
 			str := fmt.Sprintf("%f", ebiten.CurrentFPS())
 			t.Message = str
 		}
