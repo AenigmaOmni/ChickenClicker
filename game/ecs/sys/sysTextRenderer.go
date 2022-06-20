@@ -2,6 +2,7 @@ package sys
 
 import (
 	"image/color"
+
 	comps "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/entity"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -12,17 +13,20 @@ type SystemTextRenderer struct {
 
 }
 
-func (sr *SystemTextRenderer) Update(entities []entity.Entity, delta float64) {
+func (sr *SystemTextRenderer) Update(entities *[]entity.Entity, delta float64) {
 
 }
 
-func (sr *SystemTextRenderer) Draw(entities []entity.Entity, screen *ebiten.Image) {
-	for i := 0; i < len(entities); i++ {
-		e := entities[i]
-		if e.HasComponent(comps.C_TEXT) {
+func (sr *SystemTextRenderer) Draw(entities *[]entity.Entity, screen *ebiten.Image) {
+	for i := 0; i < len(*entities); i++ {
+		e := (*entities)[i]
+		if e.HasComponent(comps.C_TEXT) && e.HasComponent(comps.C_POSITION) {
 			comp := e.GetComponentWithID(comps.C_TEXT)
 			var textCom *comps.ComponentText = comp.(*comps.ComponentText)
-			text.Draw(screen, textCom.Message, textCom.FontFace, 20, 20, color.White)
+
+			coPos := e.GetComponentWithID(comps.C_POSITION)
+			var pos *comps.ComponentPosition = coPos.(*comps.ComponentPosition)
+			text.Draw(screen, textCom.Message, textCom.FontFace, int(pos.X), int(pos.Y), color.White)
 		}
 	}
 }

@@ -15,8 +15,23 @@ type World struct {
 	drawSystems []sys.DrawSystem
 }
 
-func NewWorld(screenWidth int, screenHeight int) World {
-	w := World{}
+func loadHUD(w *World) {
+	hud := w.entityManager.Create()
+	
+	//fps
+	fpsC := comps.NewTextComponent(32, 32, "FPS: 60")
+	hud.AddComponent(&fpsC)
+	fpsT := comps.NewComponentFPSTracker()
+	hud.AddComponent(&fpsT)
+	fpsP := comps.NewComponentPosition()
+	fpsP.X = 10
+	fpsP.Y = 20
+	hud.AddComponent(&fpsP)
+
+	w.AddEntity(hud)
+}
+
+func loadSprites(w *World, screenWidth int, screenHeight int) {
 	w.entityManager = entity.NewEntityManager()
 
 	h := w.entityManager.Create()
@@ -30,19 +45,17 @@ func NewWorld(screenWidth int, screenHeight int) World {
 	h.AddComponent(&chickPos)
 
 	w.AddEntity(h)
+}
 
-	w.AddDrawSystem(&sys.SystemSpriteRender{})
+func NewWorld(screenWidth int, screenHeight int) World {
+	w := World{}
 
-	hud := w.entityManager.Create()
-	fpsC := comps.NewTextComponent(32, 32, "FPS: 60")
-	hud.AddComponent(&fpsC)
-	fpsT := comps.NewComponentFPSTracker()
-	hud.AddComponent(&fpsT)
-
-	w.AddEntity(hud)
+	loadSprites(&w, screenWidth, screenHeight)
+	loadHUD(&w)
 
 	w.AddDrawSystem(&sys.SystemTextRenderer{})
 	w.AddUpdateSystem(&sys.SystemFPSTracker{})
+	w.AddDrawSystem(&sys.SystemSpriteRender{})
 
 	return w
 }
@@ -61,12 +74,12 @@ func (w *World) AddEntity(ent entity.Entity) {
 
 func (w *World) Update(delta float64) {
 	for i := 0; i < len(w.updateSystems); i++ {
-		w.updateSystems[i].Update(w.entities, delta)
+		w.updateSystems[i].Update(&w.entities, delta)
 	}
 }
 
 func (w *World) Draw(screen *ebiten.Image) {
 	for i := 0; i < len(w.drawSystems); i++ {
-		w.drawSystems[i].Draw(w.entities, screen)
+		w.drawSystems[i].Draw(&w.entities, screen)
 	}
 }
