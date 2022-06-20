@@ -4,18 +4,18 @@ import (
 	"image"
 
 	comps "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
-	"github.com/AenigmaOmni/ChickenClicker/game/ecs/entity"
+	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type SystemMapRenderer struct {
 }
 
-func (s *SystemMapRenderer) Update(entities []entity.Entity, delta float64) {
+func (s *SystemMapRenderer) Update(entities []ec.Entity, delta float64) {
 
 }
 
-func (s *SystemMapRenderer) Draw(entities []entity.Entity, screen *ebiten.Image) {
+func (s *SystemMapRenderer) Draw(entities []ec.Entity, screen *ebiten.Image) {
 	for i := range entities {
 		if entities[i].HasComponent(comps.C_MAP) {
 			mc := entities[i].GetComponentWithID(comps.C_MAP)

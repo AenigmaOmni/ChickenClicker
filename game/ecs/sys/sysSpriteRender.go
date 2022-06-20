@@ -2,16 +2,16 @@ package sys
 
 import "github.com/hajimehoshi/ebiten/v2"
 import comps "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
-import "github.com/AenigmaOmni/ChickenClicker/game/ecs/entity"
+import "github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 
 type SystemSpriteRender struct {
 }
 
-func (sr *SystemSpriteRender) Update(entities *[]entity.Entity, delta float64) {
+func (sr *SystemSpriteRender) Update(entities *[]ec.Entity, delta float64) {
 
 }
 
-func (sr *SystemSpriteRender) Draw(entities *[]entity.Entity, screen *ebiten.Image) {
+func (sr *SystemSpriteRender) Draw(entities *[]ec.Entity, screen *ebiten.Image) {
 	for i := 0; i < len(*entities); i++ {
 		e := (*entities)[i]
 		if e.HasComponent(comps.C_POSITION) && e.HasComponent(comps.C_SPRITE) {

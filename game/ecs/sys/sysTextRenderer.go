@@ -4,7 +4,7 @@ import (
 	"image/color"
 
 	comps "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
-	"github.com/AenigmaOmni/ChickenClicker/game/ecs/entity"
+	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 )
@@ -13,11 +13,11 @@ type SystemTextRenderer struct {
 
 }
 
-func (sr *SystemTextRenderer) Update(entities *[]entity.Entity, delta float64) {
+func (sr *SystemTextRenderer) Update(entities *[]ec.Entity, delta float64) {
 
 }
 
-func (sr *SystemTextRenderer) Draw(entities *[]entity.Entity, screen *ebiten.Image) {
+func (sr *SystemTextRenderer) Draw(entities *[]ec.Entity, screen *ebiten.Image) {
 	for i := 0; i < len(*entities); i++ {
 		e := (*entities)[i]
 		if e.HasComponent(comps.C_TEXT) && e.HasComponent(comps.C_POSITION) {

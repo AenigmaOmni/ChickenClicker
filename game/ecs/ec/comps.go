@@ -1,4 +1,4 @@
-package comps
+package ec
 
 const (
 	C_POSITION = 0
@@ -8,8 +8,11 @@ const (
 	C_MAP = 4
 	C_TEXT = 5
 	C_FPSTRACKER = 6
+	C_CLICKER = 7
+	C_SPATIAL = 8
 )
 
 type Component interface {
 	GetID() int
+	GetEntityID() int64
 }

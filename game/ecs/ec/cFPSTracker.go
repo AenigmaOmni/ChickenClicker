@@ -1,7 +1,8 @@
-package comps
+package ec
 
 type ComponentFPSTracker struct {
 	ID int
+	parent Entity
 }
 
 func NewComponentFPSTracker() ComponentFPSTracker {
@@ -13,4 +14,8 @@ func NewComponentFPSTracker() ComponentFPSTracker {
 
 func (c *ComponentFPSTracker) GetID() int {
 	return c.ID
+}
+
+func (c *ComponentFPSTracker) GetEntityID() int64 {
+	return c.parent.GetID()
 }

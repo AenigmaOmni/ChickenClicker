@@ -1,4 +1,4 @@
-package entity
+package ec
 
 type EntityManager struct {
 	count int64

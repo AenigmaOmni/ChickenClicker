@@ -1,4 +1,4 @@
-package comps
+package ec
 
 import (
 	"golang.org/x/image/font"
@@ -8,7 +8,8 @@ import (
 type ComponentText struct {
 	FontFace font.Face
 	Message string
-	ID int	
+	ID int
+	parent Entity
 }
 
 func NewTextComponent(size float64, dpi float64, msg string) ComponentText {
@@ -22,4 +23,8 @@ func NewTextComponent(size float64, dpi float64, msg string) ComponentText {
 
 func (t *ComponentText) GetID() int {
 	return t.ID
+}
+
+func (c *ComponentText) GetEntityID() int64 {
+	return c.parent.GetID()
 }

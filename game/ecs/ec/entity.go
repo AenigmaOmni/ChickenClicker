@@ -1,21 +1,19 @@
-package entity
-
-import "github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
+package ec
 
 type Entity struct {
 	id int64
-	components []comps.Component
+	components []Component
 }
 
-func (e *Entity) AddComponent(comp comps.Component) {
+func (e *Entity) AddComponent(comp Component) {
 	e.components = append(e.components, comp)
 }
 
-func (e *Entity) GetComponents() []comps.Component {
+func (e *Entity) GetComponents() []Component {
 	return e.components
 }
 
-func (e *Entity) GetComponentWithID(id int) comps.Component {
+func (e *Entity) GetComponentWithID(id int) Component {
 	for i := 0; i < len(e.components); i++ {
 		c := e.components[i]
 		if c.GetID() == id {
@@ -33,4 +31,8 @@ func (e *Entity) HasComponent(id int) bool {
 		}
 	}
 	return false
+}
+
+func (e *Entity) GetID() int64 {
+	return e.id
 }

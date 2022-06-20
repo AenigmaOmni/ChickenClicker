@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/AenigmaOmni/ChickenClicker/game/ecs/comps"
+	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -40,7 +40,7 @@ type LayerData struct {
 	Data []int `json:"data"`
 }
 
-func LoadJSONTiledMapComponent(path string) comps.ComponentMap {
+func LoadJSONTiledMapComponent(path string) ec.ComponentMap {
 	jsonF, err := os.Open(path)
 
 	if err != nil {
@@ -55,7 +55,7 @@ func LoadJSONTiledMapComponent(path string) comps.ComponentMap {
 
 	json.Unmarshal(byteValue, &data)
 	
-	m := comps.NewComponentMap()
+	m := ec.NewComponentMap()
 
 	m.Height = int(data.Height)
 	m.Width = int(data.Width)

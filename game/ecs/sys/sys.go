@@ -1,12 +1,12 @@
 package sys
 
 import "github.com/hajimehoshi/ebiten/v2"
-import "github.com/AenigmaOmni/ChickenClicker/game/ecs/entity"
+import "github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 
 type UpdateSystem interface {
-	Update(*[]entity.Entity, float64)
+	Update(*[]ec.Entity, float64)
 }
 
 type DrawSystem interface {
-	Draw(*[]entity.Entity, *ebiten.Image)
+	Draw(*[]ec.Entity, *ebiten.Image)
 }

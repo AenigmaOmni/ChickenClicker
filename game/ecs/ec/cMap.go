@@ -1,4 +1,4 @@
-package comps
+package ec
 
 import "github.com/hajimehoshi/ebiten/v2"
 
@@ -17,6 +17,7 @@ type ComponentMap struct {
 	ImageHeight int
 	ImageWidth int
 	TileImageCount int
+	parent Entity
 }
 
 func NewComponentMap() ComponentMap {
@@ -28,4 +29,8 @@ func NewComponentMap() ComponentMap {
 
 func (c *ComponentMap) GetID() int {
 	return c.ID
+}
+
+func (c *ComponentMap) GetEntityID() int64 {
+	return c.parent.GetID()
 }

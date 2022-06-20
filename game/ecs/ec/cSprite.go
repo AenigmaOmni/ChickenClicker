@@ -1,4 +1,4 @@
-package comps
+package ec
 
 import (
 	_ "image/png"
@@ -11,6 +11,7 @@ type ComponentSprite struct {
 	Image *ebiten.Image
 	Width int
 	Height int
+	parent Entity
 }
 
 
@@ -32,4 +33,8 @@ func NewComponentSprite(path string) ComponentSprite {
 
 func (s *ComponentSprite) GetID() int {
 	return s.ID
+}
+
+func (c *ComponentSprite) GetEntityID() int64 {
+	return c.parent.GetID()
 }
