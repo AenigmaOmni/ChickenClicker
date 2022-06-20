@@ -1,7 +1,9 @@
 package sys
 
-import "github.com/hajimehoshi/ebiten/v2"
-import "github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
+import (
+	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type SystemSpriteRender struct {
 }
@@ -26,6 +28,19 @@ func (sr *SystemSpriteRender) Draw(entities *[]ec.Entity, screen *ebiten.Image) 
 			drawOp := &ebiten.DrawImageOptions{}
 			drawOp.GeoM.Translate(x, y)
 			screen.DrawImage(img, drawOp)
-		}
+		} else if e.HasComponent(ec.C_SPATIAL) && e.HasComponent(ec.C_SPRITE) {
+			sComp := e.GetComponentWithID(ec.C_SPATIAL)
+			var spat *ec.ComponentSpatial = sComp.(*ec.ComponentSpatial)
+			x := spat.X
+			y := spat.Y
+					
+			spriteComp := e.GetComponentWithID(ec.C_SPRITE)
+			var sprite *ec.ComponentSprite = spriteComp.(*ec.ComponentSprite)
+			img := sprite.Image
+
+			drawOp := &ebiten.DrawImageOptions{}
+			drawOp.GeoM.Translate(x, y)
+			screen.DrawImage(img, drawOp)
+		}	
 	}
 }

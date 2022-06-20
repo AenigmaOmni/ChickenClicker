@@ -1,8 +1,17 @@
 package ec
 
 type Entity struct {
+	tag string
 	id int64
 	components []Component
+}
+
+func (e *Entity) SetTag(t string) {
+	e.tag = t
+}
+
+func (e *Entity) GetTag() string {
+	return e.tag
 }
 
 func (e *Entity) AddComponent(comp Component) {

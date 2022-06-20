@@ -10,6 +10,7 @@ const (
 	C_FPSTRACKER = 6
 	C_CLICKER = 7
 	C_SPATIAL = 8
+	C_PLAYER = 9
 )
 
 type Component interface {

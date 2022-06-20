@@ -19,7 +19,7 @@ func NewGame() Game {
 
 	g.screenWidth = 1024 / 2
 	g.screenHeight = 720 / 2
-	g.title = "Project Adventure Time v0.0.1"
+	g.title = "Chicken Clicker v0.0.1"
 
 	g.world = NewWorld(g.screenWidth, g.screenHeight)
 

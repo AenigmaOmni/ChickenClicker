@@ -14,6 +14,7 @@ func (em *EntityManager) Create() Entity {
 	e := Entity{}
 
 	e.id = em.count
+	e.tag = "None"
 	em.count++
 
 	return e

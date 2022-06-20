@@ -14,6 +14,14 @@ type World struct {
 	drawSystems []sys.DrawSystem
 }
 
+func loadPlayer(w *World) {
+	p := w.entityManager.Create()
+	playerC := ec.NewComponentPlayer()
+	p.AddComponent(&playerC)
+	p.SetTag("Player")
+	w.AddEntity(p)
+}
+
 func loadHUD(w *World, screenWidth int, screenHeight int) {
 	//fps
 	fpsCounter := w.entityManager.Create()
@@ -27,6 +35,7 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 
 	//egg counter
 	eggCounter := w.entityManager.Create()
+	eggCounter.SetTag("Egg Counter")
 	eggC := ec.NewTextComponent(32, 32, "Eggs: 0")
 	eggCounter.AddComponent(&eggC)
 	eggP := ec.NewComponentPosition(10, 20)
@@ -35,12 +44,14 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 }
 
 func loadSprites(w *World, screenWidth int, screenHeight int) {
-
+	//Load chicken
 	h := w.entityManager.Create()
-
+	h.SetTag("Chicken")
 	chickSprite := ec.NewComponentSprite("res/sprites/perfect_chicken.png")
-	chickPos := ec.NewComponentPosition(float64(screenWidth / 2 - chickSprite.Width / 2),
-		float64(screenHeight / 2 - chickSprite.Height / 2))
+	chickPos := ec.NewComponentSpatial(float64(screenWidth / 2 - chickSprite.Width / 2),
+		float64(screenHeight / 2 - chickSprite.Height / 2), float64(chickSprite.Width), float64(chickSprite.Height))
+	chickClicker := ec.NewComponentClicker()
+	h.AddComponent(&chickClicker)
 	h.AddComponent(&chickSprite)
 	h.AddComponent(&chickPos)
 
@@ -51,11 +62,14 @@ func NewWorld(screenWidth int, screenHeight int) World {
 	w := World{}
 	w.entityManager = ec.NewEntityManager()
 	
+	loadPlayer(&w)
 	loadSprites(&w, screenWidth, screenHeight)
 	loadHUD(&w, screenWidth, screenHeight)
 
 	w.AddDrawSystem(&sys.SystemTextRenderer{})
 	w.AddUpdateSystem(&sys.SystemFPSTracker{})
+	w.AddUpdateSystem(&sys.SystemClickCollision{})
+	w.AddUpdateSystem(sys.NewSystemClickerEgg())
 	w.AddDrawSystem(&sys.SystemSpriteRender{})
 
 	return w
