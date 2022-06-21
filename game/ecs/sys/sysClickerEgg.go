@@ -1,8 +1,6 @@
 package sys
 
 import (
-	"fmt"
-
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
@@ -45,18 +43,7 @@ func (sr *SystemClickerEgg) Update(entities *[]ec.Entity, delta float64) {
 					click.Clicked = false
 					//Increase egg count on player
 					sr.player.Eggs++
-
-					//Loop through entities again to find egg counter
-					for k := range *entities {
-						//Check if this is the egg counter with tag
-						if (*entities)[k].GetTag() == "Egg Counter" {
-							//Get the text component
-							tC := (*entities)[k].GetComponentWithID(ec.C_TEXT)
-							var text *ec.ComponentText = tC.(*ec.ComponentText)
-							str := fmt.Sprintf("Eggs: %v", sr.player.Eggs)
-							text.Message = str
-						}
-					}
+					UpdateEggs(entities)
 				}
 			}
 		}

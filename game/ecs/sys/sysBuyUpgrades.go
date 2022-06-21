@@ -1,14 +1,10 @@
 package sys
 
 import (
-	"fmt"
-
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
 type SystemBuyUpgrades struct {
-	handBuyCost int
-	handBuyMulti float32
 	player *ec.ComponentPlayer
 	ran bool
 }
@@ -16,10 +12,6 @@ type SystemBuyUpgrades struct {
 func (sr *SystemBuyUpgrades) Update(entities *[]ec.Entity, delta float64) {
 	if !sr.ran {
 		sr.ran = true
-
-		sr.handBuyCost = 50
-		sr.handBuyMulti = 1.1
-		
 		//Loop through entities
 		for i := range *entities {
 			entity := &(*entities)[i]
@@ -28,33 +20,34 @@ func (sr *SystemBuyUpgrades) Update(entities *[]ec.Entity, delta float64) {
 				sr.player = entity.GetComponentWithID(ec.C_PLAYER).(*ec.ComponentPlayer)
 			}
 
-			if entity.GetTag() == "Hand Buy Text" {
-				if entity.HasComponent(ec.C_TEXT) {
-					hc := entity.GetComponentWithID(ec.C_TEXT)
-					var text *ec.ComponentText = hc.(*ec.ComponentText)
-					text.Message = fmt.Sprintf("Buy Petter: %v", sr.handBuyCost)
-
-				} else {
-					panic("Hand Buy Text not found!")
-				}
-			}
+			UpdateBuyHandText(entities)
 		}
 		if sr.player == nil {
 			panic("Couldn't find player in Buy Upgrades System! Did you add player? Is player entity missing 'Player' tag?")
 		}
 	}
 
+	//Check the clickers
 	for i := range *entities {
 		e := (*entities)[i]
+		//If trying to buy a petter
 		if e.GetTag() == "Buy Hand" {
+			//Make sure it has a clicker
 			if e.HasComponent(ec.C_CLICKER) {
 				cc := e.GetComponentWithID(ec.C_CLICKER)
 				var clicker *ec.ComponentClicker = cc.(*ec.ComponentClicker)
+				//If it's clicked?
 				if clicker.Clicked {
-					if sr.player.Eggs >= sr.handBuyCost {
-						sr.player.Eggs -= sr.handBuyCost
-						temp := float32(sr.handBuyCost) * sr.handBuyMulti
-						sr.handBuyCost = int(temp)
+					//If we have enough eggs, buy a petter and increase price of petter
+					if sr.player.Eggs >= sr.player.HandBuyCost {
+						sr.player.Eggs -= sr.player.HandBuyCost
+						temp := float32(sr.player.HandBuyCost) * sr.player.HandBuyMulti
+						sr.player.HandBuyCost = int(temp)
+						UpdateBuyHandText(entities)
+						UpdateEggs(entities)
+					//If we don't have enough, do nothing, and reset clicker
+					} else {
+						clicker.Clicked = false
 					}
 				}
 			}
