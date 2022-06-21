@@ -7,7 +7,7 @@ type ComponentPlayer struct {
 	HandBuyCost int
 	HandBuyMulti float32
 	HandProduction int
-	HandTimer float64
+	HandTimer float32
 }
 
 func NewComponentPlayer() ComponentPlayer {
@@ -17,7 +17,7 @@ func NewComponentPlayer() ComponentPlayer {
 	c.HandBuyCost = 10
 	c.HandBuyMulti = 1.1
 	c.HandProduction = 1
-	c.HandTimer = 3
+	c.HandTimer = 3.0
 	return c
 }
 

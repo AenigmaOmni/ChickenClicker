@@ -8,7 +8,7 @@ type WorldSpace interface {
 }
 
 type UpdateSystem interface {
-	Update(WorldSpace, *[]*ec.Entity, float64)
+	Update(WorldSpace, *[]*ec.Entity, float32)
 }
 
 type DrawSystem interface {

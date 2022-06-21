@@ -11,7 +11,7 @@ type SystemClickCollision struct {
 
 }
 
-func (sr *SystemClickCollision) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
+func (sr *SystemClickCollision) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
 	//If left mouse button released
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
 		//Loop over entities

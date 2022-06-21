@@ -12,7 +12,7 @@ type SystemFPSTracker struct {
 
 }
 
-func (sr *SystemFPSTracker) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
+func (sr *SystemFPSTracker) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
 	for i := range *entities {
 		if (*entities)[i].HasComponent(ec.C_FPSTRACKER) && (*entities)[i].HasComponent(ec.C_TEXT) {
 			comp := (*entities)[i].GetComponentWithID(ec.C_TEXT)

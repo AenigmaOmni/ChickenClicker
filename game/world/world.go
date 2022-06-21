@@ -133,7 +133,7 @@ func (w *World) AddEntity(ent *ec.Entity) {
 	w.entities = append(w.entities, ent)
 }
 
-func (w *World) Update(delta float64) {
+func (w *World) Update(delta float32) {
 	for i := 0; i < len(w.updateSystems); i++ {
 		w.updateSystems[i].Update(w, &w.entities, delta)
 	}

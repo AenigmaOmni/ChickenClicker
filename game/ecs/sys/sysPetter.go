@@ -10,7 +10,7 @@ type SystemPetter struct {
 	player *ec.ComponentPlayer
 }
 
-func (sr *SystemPetter) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
+func (sr *SystemPetter) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
 	if !sr.ran {
 		sr.ran = true
 		//Loop through entities

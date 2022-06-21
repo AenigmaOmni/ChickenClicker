@@ -2,17 +2,17 @@ package ec
 
 type ComponentTimer struct {
 	ID int
-	Timer float64
-	AlarmTime float64
+	Timer float32
+	AlarmTime float32
 	Alarm bool
 	parent Entity
 }
 
-func NewComponentTimer(time float64) ComponentTimer {
+func NewComponentTimer(time float32) ComponentTimer {
 	c := ComponentTimer{}
 	c.ID = C_TIMER
 	c.Alarm = false
-	c.Timer = 0
+	c.Timer = 0.0
 	c.AlarmTime = time
 	return c
 }

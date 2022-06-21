@@ -2,6 +2,7 @@ package game
 
 import (
 	"time"
+
 	"github.com/AenigmaOmni/ChickenClicker/game/world"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -11,7 +12,7 @@ type Game struct {
 	screenHeight int
 	title string
 	world world.World
-	prevUpdateTime time.Time
+	prevTime int64
 }
 
 func NewGame() Game {
@@ -19,9 +20,11 @@ func NewGame() Game {
 
 	g.screenWidth = 1024 / 2
 	g.screenHeight = 720 / 2
-	g.title = "Chicken Clicker v0.0.1"
+	g.title = "Chicken Clicker v0.2.0"
 
 	g.world = world.NewWorld(g.screenWidth, g.screenHeight)
+
+	g.prevTime = time.Now().UnixMilli()
 
 	ebiten.SetWindowSize(g.screenWidth*2, g.screenHeight*2)
 	ebiten.SetWindowTitle(g.title)
@@ -35,11 +38,13 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func (g *Game) Update() error {
 	//Calculate delta time
-	delta := float64(time.Since(g.prevUpdateTime))
-	g.prevUpdateTime = time.Now()
+	timeNow := time.Now().UnixNano()
+	deltaTime := float64(((timeNow - g.prevTime) / 1000000)) * 0.001
+	g.prevTime = timeNow
+	
+	delta := float32(deltaTime)
 
 	g.world.Update(delta)
-	
 	return nil
 }
 

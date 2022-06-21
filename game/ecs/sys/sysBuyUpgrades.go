@@ -11,7 +11,7 @@ type SystemBuyUpgrades struct {
 	ran bool
 }
 
-func (sr *SystemBuyUpgrades) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
+func (sr *SystemBuyUpgrades) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
 	if !sr.ran {
 		sr.ran = true
 		//Loop through entities
@@ -49,12 +49,15 @@ func (sr *SystemBuyUpgrades) Update(world inter.WorldSpace, entities *[]*ec.Enti
 
 						//Create petter
 						petter := (world).CreateEntity()
+						petter.SetTag("Petter")
 						petTimer := ec.NewComponentTimer(sr.player.HandTimer)
 						petter.AddComponent(&petTimer)
 
 						//Update interface
 						UpdateBuyHandText(entities)
 						UpdateEggs(entities)
+
+						clicker.Clicked = false
 					//If we don't have enough, do nothing, and reset clicker
 					} else {
 						clicker.Clicked = false

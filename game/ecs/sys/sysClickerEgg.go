@@ -18,7 +18,7 @@ func NewSystemClickerEgg() *SystemClickerEgg {
 	return &sys
 }
 
-func (sr *SystemClickerEgg) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
+func (sr *SystemClickerEgg) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
 	if !sr.ran {
 		sr.ran = true
 		for i := range *entities {
