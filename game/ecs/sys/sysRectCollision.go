@@ -1,6 +1,8 @@
 package sys
 
 import (
+	"fmt"
+
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
@@ -42,12 +44,9 @@ func (sr *SystemRectCollision) Update(entities *[]ec.Entity, delta float64) {
 
 				//Check if this is not the same entity first
 				if parentID != tparentID {
-					//check for collision
-					if x < tx + twidth &&
-						x + width > tx &&
-						y < ty + theight &&
-						y + height > ty {
-
+					//Check for collision
+					if x < tx + twidth && x + width > tx && y < ty + theight && y + height > ty {
+						fmt.Println("Collided! O.O")
 					}
 				}
 			}
