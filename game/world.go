@@ -1,7 +1,6 @@
 package game
 
 import (
-
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/sys"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -9,11 +8,12 @@ import (
 
 type World struct {
 	entityManager ec.EntityManager
-	entities []ec.Entity
+	entities      []ec.Entity
 	updateSystems []sys.UpdateSystem
-	drawSystems []sys.DrawSystem
+	drawSystems   []sys.DrawSystem
 }
 
+//Load the player data structure
 func loadPlayer(w *World) {
 	p := w.entityManager.Create()
 	playerC := ec.NewComponentPlayer()
@@ -22,10 +22,26 @@ func loadPlayer(w *World) {
 	w.AddEntity(p)
 }
 
+//Load the buy hud
 func loadBuyHUD(w *World, screenWidth int, screenHeight int) {
+	handBuy := w.entityManager.Create()
+	handBuy.SetTag("Buy Hand")
+	handSprite := ec.NewComponentSprite("res/sprites/button.png", 2)
+	handSpat := ec.NewComponentSpatial(330, 35, float64(handSprite.Width), float64(handSprite.Height))
+	handBuy.AddComponent(&handSprite)
+	handBuy.AddComponent(&handSpat)
+	w.AddEntity(handBuy)
 
+	handBuyText := w.entityManager.Create()
+	handBuyText.SetTag("Hand Buy Text")
+	handBuyTextC := ec.NewTextComponent(40, 40, "Buy Petter")
+	handBuyTextPos := ec.NewComponentPosition(345, 65)
+	handBuyText.AddComponent(&handBuyTextC)
+	handBuyText.AddComponent(&handBuyTextPos)
+	w.AddEntity(handBuyText)
 }
 
+//Load interface elements
 func loadHUD(w *World, screenWidth int, screenHeight int) {
 	//hud background
 	hudBG := w.entityManager.Create()
@@ -41,7 +57,7 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	fpsCounter.AddComponent(&fpsC)
 	fpsT := ec.NewComponentFPSTracker()
 	fpsCounter.AddComponent(&fpsT)
-	fpsP := ec.NewComponentPosition(float64(screenWidth - 80), 20)
+	fpsP := ec.NewComponentPosition(float64(screenWidth-80), 20)
 	fpsCounter.AddComponent(&fpsP)
 	w.AddEntity(fpsCounter)
 
@@ -59,18 +75,19 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	petStr.SetTag("Pet Text")
 	petTC := ec.NewTextComponent(40, 40, "Pet the Chicken for Eggs!")
 	petStr.AddComponent(&petTC)
-	petPos := ec.NewComponentPosition(55, float64(screenHeight / 2 - 100))
+	petPos := ec.NewComponentPosition(55, float64(screenHeight/2-100))
 	petStr.AddComponent(&petPos)
 	w.AddEntity(petStr)
 }
 
+//Load sprites
 func loadSprites(w *World, screenWidth int, screenHeight int) {
 	//Load chicken
 	h := w.entityManager.Create()
 	h.SetTag("Chicken")
 	chickSprite := ec.NewComponentSprite("res/sprites/perfect_chicken.png", 2)
 	chickPos := ec.NewComponentSpatial(145,
-		float64(screenHeight / 2 - chickSprite.Height / 2), float64(chickSprite.Width), float64(chickSprite.Height))
+		float64(screenHeight/2-chickSprite.Height/2), float64(chickSprite.Width), float64(chickSprite.Height))
 	chickClicker := ec.NewComponentClicker()
 	h.AddComponent(&chickClicker)
 	h.AddComponent(&chickSprite)
@@ -79,21 +96,32 @@ func loadSprites(w *World, screenWidth int, screenHeight int) {
 	w.AddEntity(h)
 }
 
+//Load systems
+func loadSystems(w *World) {
+	
+	//Load update systems
+	w.AddUpdateSystem(&sys.SystemFPSTracker{})
+	w.AddUpdateSystem(&sys.SystemClickCollision{})
+	w.AddUpdateSystem(sys.NewSystemClickerEgg())
+	w.AddUpdateSystem(&sys.SystemBuyUpgrades{})
+
+	//Load draw systems
+	w.AddDrawSystem(&sys.SystemSpriteRender{})
+	//Add text renderer after srite renderer
+	w.AddDrawSystem(&sys.SystemTextRenderer{})
+}
+
+//Create new world
 func NewWorld(screenWidth int, screenHeight int) World {
 	w := World{}
 	w.entityManager = ec.NewEntityManager()
-	
+
 	loadPlayer(&w)
 	loadSprites(&w, screenWidth, screenHeight)
 	loadHUD(&w, screenWidth, screenHeight)
 	loadBuyHUD(&w, screenWidth, screenHeight)
 
-	w.AddUpdateSystem(&sys.SystemFPSTracker{})
-	w.AddUpdateSystem(&sys.SystemClickCollision{})
-	w.AddUpdateSystem(sys.NewSystemClickerEgg())
-	w.AddDrawSystem(&sys.SystemSpriteRender{})
-	//Add text renderer after srite renderer
-	w.AddDrawSystem(&sys.SystemTextRenderer{})
+	loadSystems(&w)
 	return w
 }
 

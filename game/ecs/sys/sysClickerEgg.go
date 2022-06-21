@@ -29,7 +29,7 @@ func (sr *SystemClickerEgg) Update(entities *[]ec.Entity, delta float64) {
 				return
 			}
 		}
-		panic("Couldn't find player! Did you add player? Is player entity missing 'Player' tag?")
+		panic("Couldn't find player in Clicker Egg System! Did you add player? Is player entity missing 'Player' tag?")
 	}
 	//Loop through entities
 	for i := range *entities {
