@@ -22,7 +22,19 @@ func loadPlayer(w *World) {
 	w.AddEntity(p)
 }
 
+func loadBuyHUD(w *World, screenWidth int, screenHeight int) {
+
+}
+
 func loadHUD(w *World, screenWidth int, screenHeight int) {
+	//hud background
+	hudBG := w.entityManager.Create()
+	spriteC := ec.NewComponentSprite("res/sprites/hud.png", 1)
+	hudBG.AddComponent(&spriteC)
+	hudBGPos := ec.NewComponentPosition(0, 0)
+	hudBG.AddComponent(&hudBGPos)
+	w.AddEntity(hudBG)
+
 	//fps
 	fpsCounter := w.entityManager.Create()
 	fpsC := ec.NewTextComponent(32, 32, "FPS: 60")
@@ -47,7 +59,7 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	petStr.SetTag("Pet Text")
 	petTC := ec.NewTextComponent(40, 40, "Pet the Chicken for Eggs!")
 	petStr.AddComponent(&petTC)
-	petPos := ec.NewComponentPosition(125, float64(screenHeight / 2 - 100))
+	petPos := ec.NewComponentPosition(55, float64(screenHeight / 2 - 100))
 	petStr.AddComponent(&petPos)
 	w.AddEntity(petStr)
 }
@@ -56,8 +68,8 @@ func loadSprites(w *World, screenWidth int, screenHeight int) {
 	//Load chicken
 	h := w.entityManager.Create()
 	h.SetTag("Chicken")
-	chickSprite := ec.NewComponentSprite("res/sprites/perfect_chicken.png")
-	chickPos := ec.NewComponentSpatial(float64(screenWidth / 2 - chickSprite.Width / 2),
+	chickSprite := ec.NewComponentSprite("res/sprites/perfect_chicken.png", 2)
+	chickPos := ec.NewComponentSpatial(145,
 		float64(screenHeight / 2 - chickSprite.Height / 2), float64(chickSprite.Width), float64(chickSprite.Height))
 	chickClicker := ec.NewComponentClicker()
 	h.AddComponent(&chickClicker)
@@ -74,13 +86,14 @@ func NewWorld(screenWidth int, screenHeight int) World {
 	loadPlayer(&w)
 	loadSprites(&w, screenWidth, screenHeight)
 	loadHUD(&w, screenWidth, screenHeight)
+	loadBuyHUD(&w, screenWidth, screenHeight)
 
-	w.AddDrawSystem(&sys.SystemTextRenderer{})
 	w.AddUpdateSystem(&sys.SystemFPSTracker{})
 	w.AddUpdateSystem(&sys.SystemClickCollision{})
 	w.AddUpdateSystem(sys.NewSystemClickerEgg())
 	w.AddDrawSystem(&sys.SystemSpriteRender{})
-
+	//Add text renderer after srite renderer
+	w.AddDrawSystem(&sys.SystemTextRenderer{})
 	return w
 }
 

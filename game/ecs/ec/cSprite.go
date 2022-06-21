@@ -12,13 +12,19 @@ type ComponentSprite struct {
 	Width int
 	Height int
 	parent Entity
+	Layer int
 }
 
 
-func NewComponentSprite(path string) ComponentSprite {
+func NewComponentSprite(path string, layer int) ComponentSprite {
 	s := ComponentSprite{}
 	s.ID = C_SPRITE
 
+	if layer > 4 && layer < 1 {
+		panic("Sprite component not passed a prayer rendering layer! Layer must be passed 1, 2, 3, or 4!")
+	} else {
+		s.Layer = layer
+	}
 	img, _, err := ebitenutil.NewImageFromFile(path)
 
 	if err != nil {
