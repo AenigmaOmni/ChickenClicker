@@ -6,14 +6,14 @@ import (
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
-func UpdateEggs(entities *[]ec.Entity) {
+func UpdateEggs(entities *[]*ec.Entity) {
 	for i := range *entities {
-		e := &(*entities)[i]
+		e := (*entities)[i]
 		//Get player
 		if e.GetTag() == "Player" {
 			//Get egg counter
 			for j := range *entities {
-				e2 := &(*entities)[j]
+				e2 := (*entities)[j]
 				if e2.GetTag() == "Egg Counter" {
 					if e2.HasComponent(ec.C_TEXT) {
 						//Update egg text
@@ -32,14 +32,14 @@ func UpdateEggs(entities *[]ec.Entity) {
 	panic("Couldn't find player in UpdateEggs function")
 }
 
-func UpdateBuyHandText(entities *[]ec.Entity) {
+func UpdateBuyHandText(entities *[]*ec.Entity) {
 	for i := range *entities {
-		e := &(*entities)[i]
+		e := (*entities)[i]
 		//Get player
 		if e.GetTag() == "Player" {
 			//Get hand buy text
 			for j := range *entities {
-				e2 := &(*entities)[j]
+				e2 := (*entities)[j]
 				if e2.GetTag() == "Hand Buy Text" {
 					if e2.HasComponent(ec.C_TEXT) {
 						//Update hand buy text

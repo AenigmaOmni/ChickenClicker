@@ -11,6 +11,7 @@ const (
 	C_CLICKER = 7
 	C_SPATIAL = 8
 	C_PLAYER = 9
+	C_TIMER = 10
 )
 
 type Component interface {

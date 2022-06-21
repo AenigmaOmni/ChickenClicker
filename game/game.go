@@ -2,7 +2,7 @@ package game
 
 import (
 	"time"
-
+	"github.com/AenigmaOmni/ChickenClicker/game/world"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -10,7 +10,7 @@ type Game struct {
 	screenWidth int
 	screenHeight int
 	title string
-	world World
+	world world.World
 	prevUpdateTime time.Time
 }
 
@@ -21,7 +21,7 @@ func NewGame() Game {
 	g.screenHeight = 720 / 2
 	g.title = "Chicken Clicker v0.0.1"
 
-	g.world = NewWorld(g.screenWidth, g.screenHeight)
+	g.world = world.NewWorld(g.screenWidth, g.screenHeight)
 
 	ebiten.SetWindowSize(g.screenWidth*2, g.screenHeight*2)
 	ebiten.SetWindowTitle(g.title)

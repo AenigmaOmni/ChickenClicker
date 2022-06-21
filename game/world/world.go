@@ -1,16 +1,17 @@
-package game
+package world
 
 import (
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/sys"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type World struct {
-	entityManager ec.EntityManager
-	entities      []ec.Entity
-	updateSystems []sys.UpdateSystem
-	drawSystems   []sys.DrawSystem
+	entityManager EntityManager
+	entities      []*ec.Entity
+	updateSystems []inter.UpdateSystem
+	drawSystems   []inter.DrawSystem
 }
 
 //Load the player data structure
@@ -19,7 +20,6 @@ func loadPlayer(w *World) {
 	playerC := ec.NewComponentPlayer()
 	p.AddComponent(&playerC)
 	p.SetTag("Player")
-	w.AddEntity(p)
 }
 
 //Load the buy hud
@@ -32,7 +32,6 @@ func loadBuyHUD(w *World, screenWidth int, screenHeight int) {
 	handBuy.AddComponent(&handClicker)
 	handBuy.AddComponent(&handSprite)
 	handBuy.AddComponent(&handSpat)
-	w.AddEntity(handBuy)
 
 	handBuyText := w.entityManager.Create()
 	handBuyText.SetTag("Hand Buy Text")
@@ -40,7 +39,6 @@ func loadBuyHUD(w *World, screenWidth int, screenHeight int) {
 	handBuyTextPos := ec.NewComponentPosition(345, 65)
 	handBuyText.AddComponent(&handBuyTextC)
 	handBuyText.AddComponent(&handBuyTextPos)
-	w.AddEntity(handBuyText)
 }
 
 //Load interface elements
@@ -51,7 +49,6 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	hudBG.AddComponent(&spriteC)
 	hudBGPos := ec.NewComponentPosition(0, 0)
 	hudBG.AddComponent(&hudBGPos)
-	w.AddEntity(hudBG)
 
 	//fps
 	fpsCounter := w.entityManager.Create()
@@ -61,7 +58,6 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	fpsCounter.AddComponent(&fpsT)
 	fpsP := ec.NewComponentPosition(float64(screenWidth-80), 20)
 	fpsCounter.AddComponent(&fpsP)
-	w.AddEntity(fpsCounter)
 
 	//egg counter
 	eggCounter := w.entityManager.Create()
@@ -70,7 +66,6 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	eggCounter.AddComponent(&eggC)
 	eggP := ec.NewComponentPosition(10, 20)
 	eggCounter.AddComponent(&eggP)
-	w.AddEntity(eggCounter)
 
 	//pet text
 	petStr := w.entityManager.Create()
@@ -79,7 +74,6 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	petStr.AddComponent(&petTC)
 	petPos := ec.NewComponentPosition(55, float64(screenHeight/2-100))
 	petStr.AddComponent(&petPos)
-	w.AddEntity(petStr)
 }
 
 //Load sprites
@@ -94,8 +88,6 @@ func loadSprites(w *World, screenWidth int, screenHeight int) {
 	h.AddComponent(&chickClicker)
 	h.AddComponent(&chickSprite)
 	h.AddComponent(&chickPos)
-
-	w.AddEntity(h)
 }
 
 //Load systems
@@ -106,6 +98,8 @@ func loadSystems(w *World) {
 	w.AddUpdateSystem(&sys.SystemClickCollision{})
 	w.AddUpdateSystem(sys.NewSystemClickerEgg())
 	w.AddUpdateSystem(&sys.SystemBuyUpgrades{})
+	w.AddUpdateSystem(&sys.SystemPetter{})
+	w.AddUpdateSystem(&sys.SystemTimer{})
 
 	//Load draw systems
 	w.AddDrawSystem(&sys.SystemSpriteRender{})
@@ -116,7 +110,7 @@ func loadSystems(w *World) {
 //Create new world
 func NewWorld(screenWidth int, screenHeight int) World {
 	w := World{}
-	w.entityManager = ec.NewEntityManager()
+	w.entityManager = NewEntityManager(&w)
 
 	loadPlayer(&w)
 	loadSprites(&w, screenWidth, screenHeight)
@@ -127,26 +121,32 @@ func NewWorld(screenWidth int, screenHeight int) World {
 	return w
 }
 
-func (w *World) AddDrawSystem(ds sys.DrawSystem) {
+func (w *World) AddDrawSystem(ds inter.DrawSystem) {
 	w.drawSystems = append(w.drawSystems, ds)
 }
 
-func (w *World) AddUpdateSystem(us sys.UpdateSystem) {
+func (w *World) AddUpdateSystem(us inter.UpdateSystem) {
 	w.updateSystems = append(w.updateSystems, us)
 }
 
-func (w *World) AddEntity(ent ec.Entity) {
+func (w *World) AddEntity(ent *ec.Entity) {
 	w.entities = append(w.entities, ent)
 }
 
 func (w *World) Update(delta float64) {
 	for i := 0; i < len(w.updateSystems); i++ {
-		w.updateSystems[i].Update(&w.entities, delta)
+		w.updateSystems[i].Update(w, &w.entities, delta)
 	}
 }
 
 func (w *World) Draw(screen *ebiten.Image) {
 	for i := 0; i < len(w.drawSystems); i++ {
-		w.drawSystems[i].Draw(&w.entities, screen)
+		w.drawSystems[i].Draw(w, &w.entities, screen)
 	}
+}
+
+func (w *World) CreateEntity() *ec.Entity {
+	e := w.entityManager.Create()
+	w.AddEntity(e)
+	return e
 }

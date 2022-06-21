@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -8,11 +9,7 @@ import (
 type SystemSpriteRender struct {
 }
 
-func (sr *SystemSpriteRender) Update(entities *[]ec.Entity, delta float64) {
-
-}
-
-func (sr *SystemSpriteRender) Draw(entities *[]ec.Entity, screen *ebiten.Image) {
+func (sr *SystemSpriteRender) Draw(world inter.WorldSpace, entities *[]*ec.Entity, screen *ebiten.Image) {
 
 	//Draw layer 1
 
@@ -63,7 +60,7 @@ func (sr *SystemSpriteRender) Draw(entities *[]ec.Entity, screen *ebiten.Image) 
 	}
 }
 
-func getLayerEntities(entities *[]ec.Entity, layerID int) []*ec.Entity {
+func getLayerEntities(entities *[]*ec.Entity, layerID int) []*ec.Entity {
 	slice := make([]*ec.Entity, 0)
 	for i := 0; i < len(*entities); i++ {
 		e := (*entities)[i]
@@ -72,13 +69,13 @@ func getLayerEntities(entities *[]ec.Entity, layerID int) []*ec.Entity {
 			c := e.GetComponentWithID(ec.C_SPRITE)
 			var spr *ec.ComponentSprite = c.(*ec.ComponentSprite)
 			if spr.Layer == layerID {
-				slice = append(slice, &(*entities)[i])
+				slice = append(slice, (*entities)[i])
 			}
 		} else if e.HasComponent(ec.C_SPATIAL) && e.HasComponent(ec.C_SPRITE) {
 			c := e.GetComponentWithID(ec.C_SPRITE)
 			var spr *ec.ComponentSprite = c.(*ec.ComponentSprite)
 			if spr.Layer == layerID {
-				slice = append(slice, &(*entities)[i])
+				slice = append(slice, (*entities)[i])
 			}
 		}
 	}

@@ -3,6 +3,8 @@ package sys
 import (
 	"image"
 
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
+
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -10,11 +12,7 @@ import (
 type SystemMapRenderer struct {
 }
 
-func (s *SystemMapRenderer) Update(entities []ec.Entity, delta float64) {
-
-}
-
-func (s *SystemMapRenderer) Draw(entities []ec.Entity, screen *ebiten.Image) {
+func (s *SystemMapRenderer) Draw(world inter.WorldSpace, entities []ec.Entity, screen *ebiten.Image) {
 	for i := range entities {
 		if entities[i].HasComponent(ec.C_MAP) {
 			mc := entities[i].GetComponentWithID(ec.C_MAP)

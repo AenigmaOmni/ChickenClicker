@@ -1,7 +1,9 @@
 package sys
 
 import (
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
+	
 )
 
 type SystemBuyUpgrades struct {
@@ -9,12 +11,12 @@ type SystemBuyUpgrades struct {
 	ran bool
 }
 
-func (sr *SystemBuyUpgrades) Update(entities *[]ec.Entity, delta float64) {
+func (sr *SystemBuyUpgrades) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
 	if !sr.ran {
 		sr.ran = true
 		//Loop through entities
 		for i := range *entities {
-			entity := &(*entities)[i]
+			entity := (*entities)[i]
 			//Set player for reference
 			if entity.GetTag() == "Player" {
 				sr.player = entity.GetComponentWithID(ec.C_PLAYER).(*ec.ComponentPlayer)
@@ -40,9 +42,17 @@ func (sr *SystemBuyUpgrades) Update(entities *[]ec.Entity, delta float64) {
 				if clicker.Clicked {
 					//If we have enough eggs, buy a petter and increase price of petter
 					if sr.player.Eggs >= sr.player.HandBuyCost {
+						//Buy petter
 						sr.player.Eggs -= sr.player.HandBuyCost
 						temp := float32(sr.player.HandBuyCost) * sr.player.HandBuyMulti
 						sr.player.HandBuyCost = int(temp)
+
+						//Create petter
+						petter := (world).CreateEntity()
+						petTimer := ec.NewComponentTimer(sr.player.HandTimer)
+						petter.AddComponent(&petTimer)
+
+						//Update interface
 						UpdateBuyHandText(entities)
 						UpdateEggs(entities)
 					//If we don't have enough, do nothing, and reset clicker

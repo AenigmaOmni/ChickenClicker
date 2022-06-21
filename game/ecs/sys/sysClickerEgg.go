@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
@@ -17,11 +18,11 @@ func NewSystemClickerEgg() *SystemClickerEgg {
 	return &sys
 }
 
-func (sr *SystemClickerEgg) Update(entities *[]ec.Entity, delta float64) {
+func (sr *SystemClickerEgg) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
 	if !sr.ran {
 		sr.ran = true
 		for i := range *entities {
-			entity := &(*entities)[i]
+			entity := (*entities)[i]
 			if entity.GetTag() == "Player" {
 				sr.player = entity.GetComponentWithID(ec.C_PLAYER).(*ec.ComponentPlayer)
 				return

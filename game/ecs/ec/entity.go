@@ -2,7 +2,7 @@ package ec
 
 type Entity struct {
 	tag string
-	id int64
+	Id int64
 	components []Component
 }
 
@@ -43,5 +43,5 @@ func (e *Entity) HasComponent(id int) bool {
 }
 
 func (e *Entity) GetID() int64 {
-	return e.id
+	return e.Id
 }

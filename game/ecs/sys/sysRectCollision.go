@@ -3,6 +3,7 @@ package sys
 import (
 	"fmt"
 
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
@@ -10,7 +11,7 @@ type SystemRectCollision struct {
 
 }
 
-func (sr *SystemRectCollision) Update(entities *[]ec.Entity, delta float64) {
+func (sr *SystemRectCollision) Update(world inter.WorldSpace, entities *[]ec.Entity, delta float64) {
 	for i := range *entities {
 		if (*entities)[i].HasComponent(ec.C_SPATIAL) && (*entities)[i].HasComponent(ec.C_CLICKER) {
 			//Get an entity with spatial

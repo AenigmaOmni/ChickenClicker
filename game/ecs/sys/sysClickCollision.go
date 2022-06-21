@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"github.com/AenigmaOmni/ChickenClicker/game/inter"
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -10,7 +11,7 @@ type SystemClickCollision struct {
 
 }
 
-func (sr *SystemClickCollision) Update(entities *[]ec.Entity, delta float64) {
+func (sr *SystemClickCollision) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float64) {
 	//If left mouse button released
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
 		//Loop over entities
