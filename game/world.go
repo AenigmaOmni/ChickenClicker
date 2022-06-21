@@ -41,6 +41,15 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	eggP := ec.NewComponentPosition(10, 20)
 	eggCounter.AddComponent(&eggP)
 	w.AddEntity(eggCounter)
+
+	//pet text
+	petStr := w.entityManager.Create()
+	petStr.SetTag("Pet Text")
+	petTC := ec.NewTextComponent(40, 40, "Pet the Chicken for Eggs!")
+	petStr.AddComponent(&petTC)
+	petPos := ec.NewComponentPosition(125, float64(screenHeight / 2 - 100))
+	petStr.AddComponent(&petPos)
+	w.AddEntity(petStr)
 }
 
 func loadSprites(w *World, screenWidth int, screenHeight int) {
