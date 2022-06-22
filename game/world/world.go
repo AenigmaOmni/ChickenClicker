@@ -8,6 +8,7 @@ import (
 )
 
 type World struct {
+	player *ec.ComponentPlayer
 	entityManager EntityManager
 	entities      []*ec.Entity
 	updateSystems []inter.UpdateSystem
@@ -20,6 +21,9 @@ func loadPlayer(w *World) {
 	playerC := ec.NewComponentPlayer()
 	p.AddComponent(&playerC)
 	p.SetTag("Player")
+
+	//Get player component and store it for future reference
+	w.player = &playerC
 }
 
 //Load the buy hud
@@ -27,7 +31,7 @@ func loadBuyHUD(w *World, screenWidth int, screenHeight int) {
 	handBuy := w.entityManager.Create()
 	handBuy.SetTag("Buy Hand")
 	handSprite := ec.NewComponentSprite("res/sprites/button.png", 2)
-	handSpat := ec.NewComponentSpatial(330, 35, float64(handSprite.Width), float64(handSprite.Height))
+	handSpat := ec.NewComponentSpatial(330, 45, float64(handSprite.Width), float64(handSprite.Height))
 	handClicker := ec.NewComponentClicker()
 	handBuy.AddComponent(&handClicker)
 	handBuy.AddComponent(&handSprite)
@@ -36,19 +40,49 @@ func loadBuyHUD(w *World, screenWidth int, screenHeight int) {
 	handBuyText := w.entityManager.Create()
 	handBuyText.SetTag("Hand Buy Text")
 	handBuyTextC := ec.NewTextComponent(32, 32, "Buy Petter")
-	handBuyTextPos := ec.NewComponentPosition(345, 65)
+	handBuyTextPos := ec.NewComponentPosition(345, 70)
 	handBuyText.AddComponent(&handBuyTextC)
 	handBuyText.AddComponent(&handBuyTextPos)
+
+	farmerBuy := w.entityManager.Create()
+	farmerBuy.SetTag("Buy Farmer")
+	farmerSprite := ec.NewComponentSprite("res/sprites/button.png", 2)
+	farmerSpat := ec.NewComponentSpatial(330, 97, float64(farmerSprite.Width), float64(farmerSprite.Height))
+	farmerClicker := ec.NewComponentClicker()
+	farmerBuy.AddComponent(&farmerClicker)
+	farmerBuy.AddComponent(&farmerSprite)
+	farmerBuy.AddComponent(&farmerSpat)
+
+	farmerBuyText := w.entityManager.Create()
+	farmerBuyText.SetTag("Farmer Buy Text")
+	farmerBuyTextC := ec.NewTextComponent(32, 32, "Buy Farmer")
+	farmerBuyTextPos := ec.NewComponentPosition(345, 120)
+	farmerBuyText.AddComponent(&farmerBuyTextC)
+	farmerBuyText.AddComponent(&farmerBuyTextPos)
+}
+
+func loadGameLogic(w *World) {
+	//income timer entity
+	incomeE := w.CreateEntity()
+	incomeT := ec.NewComponentTimer(w.player.HandTimer)
+	incomeE.SetTag("Income Timer")
+	incomeE.AddComponent(&incomeT)
 }
 
 //Load interface elements
 func loadHUD(w *World, screenWidth int, screenHeight int) {
 	//hud background
-	hudBG := w.entityManager.Create()
+	hudBG := w.CreateEntity()
 	spriteC := ec.NewComponentSprite("res/sprites/hud.png", 1)
 	hudBG.AddComponent(&spriteC)
 	hudBGPos := ec.NewComponentPosition(0, 0)
 	hudBG.AddComponent(&hudBGPos)
+
+	//Hud timer for update
+	hudTimerE := w.CreateEntity()
+	hudTimer := ec.NewComponentTimer(0.05)
+	hudTimerE.SetTag("HUD Timer")
+	hudTimerE.AddComponent(&hudTimer)
 
 	//fps
 	fpsCounter := w.entityManager.Create()
@@ -56,16 +90,24 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	fpsCounter.AddComponent(&fpsC)
 	fpsT := ec.NewComponentFPSTracker()
 	fpsCounter.AddComponent(&fpsT)
-	fpsP := ec.NewComponentPosition(float64(screenWidth-80), 20)
+	fpsP := ec.NewComponentPosition(float64(screenWidth-80), 15)
 	fpsCounter.AddComponent(&fpsP)
 
-	//egg counter
-	eggCounter := w.entityManager.Create()
+	//egg text
+	eggCounter := w.CreateEntity()
 	eggCounter.SetTag("Egg Counter")
 	eggC := ec.NewTextComponent(32, 32, "Eggs: 0")
 	eggCounter.AddComponent(&eggC)
-	eggP := ec.NewComponentPosition(10, 20)
+	eggP := ec.NewComponentPosition(10, 15)
 	eggCounter.AddComponent(&eggP)
+
+	//income text
+	incomeCounter := w.CreateEntity()
+	incomeCounter.SetTag("Egg Income")
+	incomeText := ec.NewTextComponent(32, 32, "Income: 0")
+	incomeCounter.AddComponent(&incomeText)
+	incomePosition := ec.NewComponentPosition(10, 35)
+	incomeCounter.AddComponent(&incomePosition)
 
 	//pet text
 	petStr := w.entityManager.Create()
@@ -74,6 +116,21 @@ func loadHUD(w *World, screenWidth int, screenHeight int) {
 	petStr.AddComponent(&petTC)
 	petPos := ec.NewComponentPosition(55, float64(screenHeight/2-100))
 	petStr.AddComponent(&petPos)
+
+	//upgrade counter text
+	petterTE := w.CreateEntity()
+	petterTE.SetTag("Petter Upgrade Count")
+	petterText := ec.NewTextComponent(30, 30, "Petters: 0")
+	petterPos := ec.NewComponentPosition(45, float64(screenHeight) - 80)
+	petterTE.AddComponent(&petterText)
+	petterTE.AddComponent(&petterPos)
+
+	farmersTE := w.CreateEntity()
+	farmersTE.SetTag("Farmer Upgrade Count")
+	farmerText := ec.NewTextComponent(30, 30, "Farmers: 0")
+	farmerPos := ec.NewComponentPosition(45, float64(screenHeight) - 60)
+	farmersTE.AddComponent(&farmerText)
+	farmersTE.AddComponent(&farmerPos)
 }
 
 //Load sprites
@@ -96,10 +153,11 @@ func loadSystems(w *World) {
 	//Load update systems
 	w.AddUpdateSystem(&sys.SystemFPSTracker{})
 	w.AddUpdateSystem(&sys.SystemClickCollision{})
-	w.AddUpdateSystem(sys.NewSystemClickerEgg())
+	w.AddUpdateSystem(sys.NewSystemClicker())
 	w.AddUpdateSystem(&sys.SystemBuyUpgrades{})
-	w.AddUpdateSystem(&sys.SystemPetter{})
+	w.AddUpdateSystem(&sys.SystemIncome{})
 	w.AddUpdateSystem(&sys.SystemTimer{})
+	w.AddUpdateSystem(&sys.SystemHUD{})
 
 	//Load draw systems
 	w.AddDrawSystem(&sys.SystemSpriteRender{})
@@ -116,6 +174,7 @@ func NewWorld(screenWidth int, screenHeight int) World {
 	loadSprites(&w, screenWidth, screenHeight)
 	loadHUD(&w, screenWidth, screenHeight)
 	loadBuyHUD(&w, screenWidth, screenHeight)
+	loadGameLogic(&w)
 
 	loadSystems(&w)
 	return w

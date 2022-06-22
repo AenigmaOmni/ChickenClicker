@@ -5,20 +5,20 @@ import (
 	"github.com/AenigmaOmni/ChickenClicker/game/ecs/ec"
 )
 
-type SystemClickerEgg struct {
+type SystemClicker struct {
 	player *ec.ComponentPlayer
 	ran bool
 }
 
-func NewSystemClickerEgg() *SystemClickerEgg {
-	sys := SystemClickerEgg{}
+func NewSystemClicker() *SystemClicker {
+	sys := SystemClicker{}
 	sys.player = nil
 	sys.ran = false
 
 	return &sys
 }
 
-func (sr *SystemClickerEgg) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
+func (sr *SystemClicker) Update(world inter.WorldSpace, entities *[]*ec.Entity, delta float32) {
 	if !sr.ran {
 		sr.ran = true
 		for i := range *entities {
@@ -32,10 +32,10 @@ func (sr *SystemClickerEgg) Update(world inter.WorldSpace, entities *[]*ec.Entit
 	}
 	//Loop through entities
 	for i := range *entities {
-		//Check if this entity is the chicken with the tag
-		if (*entities)[i].GetTag() == "Chicken" {
-			//Check if chicken has clicker
-			if (*entities)[i].HasComponent(ec.C_CLICKER) {
+		//Check if has clicker
+		if (*entities)[i].HasComponent(ec.C_CLICKER) {
+			//Check what tag this entity
+			if (*entities)[i].GetTag() == "Chicken" {
 				//Check if clicker is clicked
 				clickC := (*entities)[i].GetComponentWithID(ec.C_CLICKER)
 				var click *ec.ComponentClicker = clickC.(*ec.ComponentClicker)
@@ -44,9 +44,8 @@ func (sr *SystemClickerEgg) Update(world inter.WorldSpace, entities *[]*ec.Entit
 					click.Clicked = false
 					//Increase egg count on player
 					sr.player.Eggs++
-					UpdateEggs(entities)
 				}
-			}
+			} 
 		}
 	}
 }

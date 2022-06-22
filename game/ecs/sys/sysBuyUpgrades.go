@@ -21,8 +21,6 @@ func (sr *SystemBuyUpgrades) Update(world inter.WorldSpace, entities *[]*ec.Enti
 			if entity.GetTag() == "Player" {
 				sr.player = entity.GetComponentWithID(ec.C_PLAYER).(*ec.ComponentPlayer)
 			}
-
-			UpdateBuyHandText(entities)
 		}
 		if sr.player == nil {
 			panic("Couldn't find player in Buy Upgrades System! Did you add player? Is player entity missing 'Player' tag?")
@@ -32,36 +30,47 @@ func (sr *SystemBuyUpgrades) Update(world inter.WorldSpace, entities *[]*ec.Enti
 	//Check the clickers
 	for i := range *entities {
 		e := (*entities)[i]
-		//If trying to buy a petter
-		if e.GetTag() == "Buy Hand" {
-			//Make sure it has a clicker
-			if e.HasComponent(ec.C_CLICKER) {
-				cc := e.GetComponentWithID(ec.C_CLICKER)
-				var clicker *ec.ComponentClicker = cc.(*ec.ComponentClicker)
-				//If it's clicked?
-				if clicker.Clicked {
+		//Make sure it has a clicker
+		if e.HasComponent(ec.C_CLICKER) {
+			cc := e.GetComponentWithID(ec.C_CLICKER)
+			var clicker *ec.ComponentClicker = cc.(*ec.ComponentClicker)
+			//If it's clicked?
+			if clicker.Clicked {
+				//Which clicker was clicked?
+				if e.GetTag() == "Buy Hand" {
 					//If we have enough eggs, buy a petter and increase price of petter
 					if sr.player.Eggs >= sr.player.HandBuyCost {
+						clicker.Clicked = false
+
 						//Buy petter
 						sr.player.Eggs -= sr.player.HandBuyCost
 						temp := float32(sr.player.HandBuyCost) * sr.player.HandBuyMulti
 						sr.player.HandBuyCost = int(temp)
 
-						//Create petter
-						petter := (world).CreateEntity()
-						petter.SetTag("Petter")
-						petTimer := ec.NewComponentTimer(sr.player.HandTimer)
-						petter.AddComponent(&petTimer)
-
-						//Update interface
-						UpdateBuyHandText(entities)
-						UpdateEggs(entities)
-
-						clicker.Clicked = false
+						//Add petter
+						sr.player.PetterCount++
+	
 					//If we don't have enough, do nothing, and reset clicker
 					} else {
 						clicker.Clicked = false
 					}
+				} else if e.GetTag() == "Buy Farmer" {
+					//If we have enough eggs, buy a farmer and increase price of farmer
+					if sr.player.Eggs >= sr.player.FarmerBuyCost {
+						clicker.Clicked = false
+
+						//Buy farmer
+						sr.player.Eggs -= sr.player.FarmerBuyCost
+						temp := float32(sr.player.FarmerBuyCost) * sr.player.FarmerBuyMulti
+						sr.player.FarmerBuyCost = int(temp)
+
+						//Add petter
+						sr.player.FarmerCount++
+	
+					//If we don't have enough, do nothing, and reset clicker
+					} else {
+						clicker.Clicked = false
+					}					
 				}
 			}
 		}
